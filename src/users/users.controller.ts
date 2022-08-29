@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { Response } from 'express';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 
@@ -7,7 +17,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   private readonly logger = new Logger(UsersController.name);
   @Get()
-  getAllUsers() {
+  @UseGuards(JwtAuthGuard)
+  getAllUsers(@Res({ passthrough: true }) response: Response) {
+    response.cookie('key', 'value');
     return this.usersService.getAllUsers();
   }
 
